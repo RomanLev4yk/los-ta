@@ -1,0 +1,48 @@
+Use:
+
+The Laravel Framework (last version)
+Doctrine ORM (preferably), otherwise Eloquent
+
+The provided SQL files with sample data.
+
+Create:
+
+A basic app (without authentication/authorization)
+Models for the provided DB structure.
+
+The public homepage (/index) should show a LOS table (= Length of Stay pricing) for the delivered property.
+
+This table contains the dates, the number of nights (from 1-21) and the number of persons.
+E.g.
+
+(the P colum is for number of people)
+
+Date/Nights | P |   1    |   2    |  
+-----------------------------------
+2017-01-01  | 1 | 99.00  | 198.00 |
+2017-01-01  | 2 | 119.00 | 238.00 |
+2017-01-01  | 3 | 139.00 | 278.00 |
+2017-01-02  | 1 | 99.00  |  0.00  |
+2017-01-02  | 2 | 119.00 |  0.00  |
+2017-01-02  | 3 | 139.00 |  0.00  |
+2017-01-03  | 1 | 0.00   |  0.00  |
+2017-01-03  | 2 | 0.00   |  0.00  |
+2017-01-03  | 3 | 0.00   |  0.00  |
+(...)
+2017-12-31  | 2 | 180.00 | 380.00 |
+2017-12-31  | 3 | 200.00 | 420.00 |
+
+
+If a certain price is not possible (e.g. because arrival_allowed is false on that date, or no availability or price record exists) please display as 0.00
+
+
+Demands:
+
+No errors in the price calculations.
+Clean codestyle (we run `phpcs -ns --standard=psr2` to check for inconsistencies)
+Per date and number of people there should only be one row, which should always show the cheapest available price
+Efficient algorithm(s).
+Preferably unit tested.
+
+We will test by modifying the example data and should receive consistent results.
+

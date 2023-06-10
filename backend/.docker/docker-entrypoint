@@ -1,0 +1,26 @@
+#!/bin/sh
+set -e
+
+echo "Entrypoint - 1"
+export LANDO_HOST_IP=$(hostname -I)
+
+HOST_DOMAIN="host.docker.internal"
+if ! ping -q -c1 $HOST_DOMAIN > /dev/null 2>&1
+then
+ HOST_IP=$(ip route | awk 'NR==1 {print $3}')
+ # shellcheck disable=SC2039
+ echo -e "$HOST_IP\t$HOST_DOMAIN" >> /etc/hosts
+fi
+
+#service nginx restart
+
+#[ -d ./vendor ] || echo 'Install composer' && composer install
+
+# Start the cron service.
+#service cron start
+
+#php artisan optimize:clear
+
+#pm2 start ecosystem-docker.config.js
+
+exec "$@"

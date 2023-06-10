@@ -1,0 +1,42 @@
+Explanation availabilities fields:
+
+property_id = UUID of the property
+date = self explaining
+quantity = number of available units of this property
+arrival_allowed = is it allowed to arrive on this date
+departure_allowed = is it allowed to depart on this date.
+minimum_stay = minimum number of nights that you should stay if this date is included in your stay
+maximum_stay = maximum number of nights that you may stay if this date is included in your stay
+
+Non-relevant fields: id, version
+
+Explanation prices fields:
+
+property_id = UUID of the property
+duration = number of nights for which the price is valid. E.g. a price for one week would have a duration of 7.
+amount = actual rent price, in cents (so 1 EUR = 100)
+currency = currency of the price 
+persons = number of persons for which this price is valid, separated by a pipe sign.
+weekdays = days of the week on which this price is valid, separated by a pipe sign. 0 = sunday, 6 = saturday (e.g. if the price is only valid on friday and saturday, the value would be "5|6"
+minimum_stay = minimum number of nights that you should stay if you use this price (e.g. duration==1, minimum_stay==3, means a nightly rate for a minimum of 3 nights)
+maximum_stay = maximum number of nights that you may stay if you use this price
+extra_person_price = price for an additional person
+extra_person_price_currency = currency for the extra person price   (should always be equal to currency)
+period_from = date from which this price is valid
+period_till = date untill this price is valid
+
+Not mentioned in SQL:
+channel = specific price for this channel
+
+
+Non-relevant fields: id, version
+
+Example: duration = 1, amount = 9900, currency = EUR, persons = 1|2|3, extra_person_price is 2000 means that the nightly rate is 99.00 EUR for 1 person.
+For two persons the price is 99.00 + 20.00 = 119.00 EUR. For three persons the price is 119.00 + 20.00 = 139.00 EUR
+
+Example: duration = 1, amount = 9900, currency = EUR, persons = 2|3|4|5|6, extra_person_price is 2000 means that the nightly rate is 99.00 EUR for 2 persons.
+For two persons the price is 99.00. For three persons the price is 99.00 + 20.00 = 119.00 EUR. For four persons the price is 119.00 + 20.00 = 139.00 EUR
+
+
+
+
