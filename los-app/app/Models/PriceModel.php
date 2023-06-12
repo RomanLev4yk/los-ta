@@ -22,7 +22,9 @@ use Illuminate\Database\Eloquent\Builder;
  * @property Carbon $period_till
  * @property int $version
  *
- * @method static|Builder whereProperty(int $property_id)
+ * @method static|Builder property(int $property_id)
+ * @method static|Builder dayOfWeekLike(int $dayOfWeek)
+ * @method static|Builder personsLike(string $persons)
  *
  * @mixin Builder
  */
@@ -52,8 +54,18 @@ class PriceModel extends Model
         'property_id',
     ];
 
-    public function scopeWhereProperty(Builder $query, int $property_id): Builder
+    public function scopeProperty(Builder $query, string $property_id): Builder
     {
         return $query->where('property_id', '=', $property_id);
+    }
+
+    public function scopeDayOfWeekLike(Builder $query, int $dayOfWeek): Builder
+    {
+        return $query->where('weekdays', 'LIKE', '%'. $dayOfWeek .'%');
+    }
+
+    public function scopePersonsLike(Builder $query, string $persons): Builder
+    {
+        return $query->where('persons', 'LIKE', '%'. $persons .'%');
     }
 }

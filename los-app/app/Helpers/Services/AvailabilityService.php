@@ -3,6 +3,7 @@
 namespace App\Helpers\Services;
 
 use App\Models\AvailabilityModel;
+use App\Models\PriceModel;
 use App\Repositories\PriceRepository;
 use App\Repositories\AvailabilityRepository;
 use App\Interfaces\PriceRepositoryInterface;
@@ -56,10 +57,9 @@ final class AvailabilityService
                         $personData[$day] = $this->calculateDayPrice(
                             $prices,
                             $day,
-                            $minOneDayModel->persons,
                             $persons,
                             $minOneDayPrice,
-                            $minOneDayModel->extra_person_price,
+                            $minOneDayModel,
                             $minMultipleDaysPrice
                         );
                     }
@@ -85,27 +85,31 @@ final class AvailabilityService
     private function calculateDayPrice(
         Collection $prices,
         int $day,
-        string $allowedPersons,
         int $persons,
-        int $minOneDayPrice,
-        int $minOneDayExtraPrice,
+        ?int $minOneDayPrice,
+        ?PriceModel $priceModel,
         ?int $minMultipleDaysPrice
     ): int {
-        if ($minMultipleDaysPrice) {
-            $multipleDayModel = $prices->where('amount', $minMultipleDaysPrice)->first();
-            $extraDays = $day - $multipleDayModel->duration;
+        if ($priceModel) {
+            if ($minMultipleDaysPrice) {
+                $multipleDayModel = $prices->where('amount', $minMultipleDaysPrice)->first();
+                $extraDays = $day - $multipleDayModel->duration;
 
-            if (str_starts_with($allowedPersons, $persons)) {
-                return ($minMultipleDaysPrice + $extraDays * $minOneDayPrice) / 100;
+                if (str_starts_with($priceModel->persons, $persons)) {
+                    return ($minMultipleDaysPrice + $extraDays * $minOneDayPrice) / 100;
+                } else {
+                    return ($minMultipleDaysPrice + $extraDays * $minOneDayPrice
+                            + $priceModel->extra_person_price * $day) / 100;
+                }
             } else {
-                return ($minMultipleDaysPrice + $extraDays * $minOneDayPrice + $minOneDayExtraPrice * $day) / 100;
+                if (str_starts_with($priceModel->persons, $persons)) {
+                    return $minOneDayPrice * $day / 100;
+                } else {
+                    return ($minOneDayPrice * $day + $priceModel->extra_person_price * $day) / 100;
+                }
             }
         } else {
-            if (str_starts_with($allowedPersons, $persons)) {
-                return $minOneDayPrice * $day / 100;
-            } else {
-                return ($minOneDayPrice * $day + $minOneDayExtraPrice * $day) / 100;
-            }
+            return 0;
         }
     }
 }

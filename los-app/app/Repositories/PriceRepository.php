@@ -10,13 +10,13 @@ class PriceRepository implements PriceRepositoryInterface
 {
     public function getPricesData(string $propertyId, string $date, int $dayOfWeek, int $personsNumber): Collection
     {
-        return PriceModel::where('property_id', $propertyId)
+        return PriceModel::property($propertyId)
             ->where(function ($query) use ($date) {
                 $query->where('period_from', '<=', $date)
                     ->where('period_till', '>=', $date);
             })
-            ->where('weekdays', 'LIKE', '%'. $dayOfWeek .'%')
-            ->where('persons', 'LIKE', '%'. $personsNumber .'%')
+            ->dayOfWeekLike($dayOfWeek)
+            ->personsLike($personsNumber)
             ->get();
     }
 }
