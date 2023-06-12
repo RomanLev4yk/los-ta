@@ -17,7 +17,8 @@ use Illuminate\Database\Eloquent\Builder;
  * @property int $maximum_stay
  * @property int $version
  *
- * @method static|Builder whereProperty(int $property_id)
+ * @method static|Builder property(string $property_id)
+ * @method static|Builder betweenDates(string $fromDate, string $toDate)
  *
  * @mixin Builder
  */
@@ -42,8 +43,17 @@ class AvailabilityModel extends Model
         'property_id',
     ];
 
-    public function scopeWhereProperty(Builder $query, int $property_id): Builder
+    protected $casts = [
+        'date' => 'datetime',
+    ];
+
+    public function scopeProperty(Builder $query, string $property_id): Builder
     {
         return $query->where('property_id', '=', $property_id);
+    }
+
+    public function scopeBetweenDates(Builder $query, string $fromDate, string $toDate): Builder
+    {
+        return $query->whereBetween('date', [$fromDate, $toDate]);
     }
 }

@@ -15,9 +15,5 @@ use App\Http\Controllers\AvailabilityDataController;
 |
 */
 
-Route::get('/', function (Request $request) {
-    return view('welcome');
-});
-
-Route::get('/data', [AvailabilityDataController::class, 'getData'])
+Route::get('/', [AvailabilityDataController::class, 'getData'])
     ->name('custom-data');

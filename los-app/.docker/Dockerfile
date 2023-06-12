@@ -138,7 +138,7 @@ RUN /usr/local/bin/composer global require phpunit/phpunit &&\
     chmod +x /usr/local/bin/dep
 
 # Install Node.js
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - \
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - \
     && apt-get install -y unzip nodejs build-essential \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false -o APT::AutoRemove::SuggestsImportant=false $buildDeps \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \

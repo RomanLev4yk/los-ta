@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface AvailabilityRepositoryInterface
 {
-    public function getStayPricingData(int $fromDate, int $toDate): Collection;
+    public function getPropertyAvailabilitiesByPeriod(string $propertyId, string $fromDate, string $toDate): Collection;
 }

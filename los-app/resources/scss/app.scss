@@ -1,0 +1,62 @@
+.form-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .form-group {
+        display: inline-block;
+    }
+
+    .actions {
+        justify-content: center;
+        display: flex;
+        margin-top: 10px;
+    }
+}
+
+.table-wrapper {
+    margin: 20px 100px;
+
+    .date {
+        width: 100px;
+    }
+
+    .persons {
+        width: 40px;
+    }
+
+    .nights {
+        width: 30px;
+    }
+
+    .table-header {
+        background: #8eec90;
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: .5px;
+        min-height: auto;
+        white-space: pre-wrap;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: center;
+    }
+
+    .table-body {
+        padding: 10px 20px;
+
+        .date-item {
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: .5px;
+            min-height: auto;
+            white-space: pre-wrap;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+            padding-bottom: 10px;
+        }
+    }
+}

@@ -11,6 +11,8 @@ docker compose build --progress plain
 # start docker container
 docker compose up -d
 
+npm install
+
 # create .env
 # enter bash and install packages
 docker compose exec app_los bash
