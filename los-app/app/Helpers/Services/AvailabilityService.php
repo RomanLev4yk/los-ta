@@ -2,8 +2,8 @@
 
 namespace App\Helpers\Services;
 
-use App\Models\AvailabilityModel;
 use App\Models\PriceModel;
+use App\Models\AvailabilityModel;
 use App\Repositories\PriceRepository;
 use App\Repositories\AvailabilityRepository;
 use App\Interfaces\PriceRepositoryInterface;
