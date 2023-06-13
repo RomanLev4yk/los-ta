@@ -25,6 +25,7 @@ final class AvailabilityService
 
     public function parseAvailableStayPrices(string $propertyId, string $fromDate, string $toDate): array
     {
+        // Get available property options inside time period
         $availabilities = $this->availabilityRepository->getPropertyAvailabilitiesByPeriod(
             $propertyId,
             $fromDate,
@@ -32,12 +33,14 @@ final class AvailabilityService
         );
 
         $result = [];
-
+        // Parsing available property options for prices
         $availabilities->each(function (AvailabilityModel $availability) use ($propertyId, &$result) {
             if ($availability->arrival_allowed) {
+                // Generating date option prices array according to number of people
                 for ($persons = 1; $persons <= $this->numberOfPersons; $persons++) {
                     $personData = [];
 
+                    // Retrieving property prices data in date range
                     $prices = $this->priceRepository->getPricesData(
                         $propertyId,
                         $availability->date,
@@ -45,7 +48,9 @@ final class AvailabilityService
                         $persons
                     );
 
+                    // Generating day options array
                     for ($day = 1; $day <= $this->numberOfDays; $day++) {
+                        // Retrieving minimum prices amount per day and per duration
                         $minOneDayPrice = $prices->where('minimum_stay', '<=', $day)
                             ->min('amount');
 
@@ -54,7 +59,9 @@ final class AvailabilityService
                         $minMultipleDaysPrice = $prices->whereBetween('duration', [2, $day])
                             ->min('amount');
 
+                        // Calculating direct day price amount
                         $personData[$day] = $this->calculateDayPrice(
+                            $availability,
                             $prices,
                             $day,
                             $persons,
@@ -63,10 +70,11 @@ final class AvailabilityService
                             $minMultipleDaysPrice
                         );
                     }
-
+                    // Preparing response array
                     $result[$availability->date->format('Y-m-d')][$persons] = $personData;
                 }
             } else {
+                // Preparing empty response array
                 for ($persons = 1; $persons <= $this->numberOfPersons; $persons++) {
                     $personData = [];
 
@@ -83,6 +91,7 @@ final class AvailabilityService
     }
 
     private function calculateDayPrice(
+        AvailabilityModel $availability,
         Collection $prices,
         int $day,
         int $persons,
@@ -90,8 +99,11 @@ final class AvailabilityService
         ?PriceModel $priceModel,
         ?int $minMultipleDaysPrice
     ): int {
-        if ($priceModel) {
+        // Checking if price property and price are available to book
+        if ($priceModel && $day <= $availability->maximum_stay && $day >= $availability->minimum_stay) {
+            // Checking if there is a minimum days duration price
             if ($minMultipleDaysPrice) {
+                // Calculating according to settings
                 $multipleDayModel = $prices->where('amount', $minMultipleDaysPrice)->first();
                 $extraDays = $day - $multipleDayModel->duration;
 

@@ -22,6 +22,11 @@ composer install
 php artisan key:generate
 php artisan migrate:fresh --seed
 
+# import database from ../resources/data.sql
+
+# run app
+npm run dev
+
 # run tests
 php artisan test
 ```
