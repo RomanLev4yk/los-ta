@@ -29,4 +29,10 @@ npm run dev
 
 # run tests
 php artisan test
+
+# run php code sniffer
+vendor/bin/phpcs
+
+# run php code sniffer refactor
+vendor/bin/phpcbf
 ```
