@@ -18,13 +18,13 @@ npm install
 docker compose exec app_los bash
 composer install
 
-# generate app key and run migrations + seeds
+# generate app key
 php artisan key:generate
 
 # import database from ../resources/data.sql
 
 # run app
-npm run dev
+run dev script from package.json
 
 # run tests
 php artisan test
