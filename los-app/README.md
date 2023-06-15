@@ -20,7 +20,6 @@ composer install
 
 # generate app key and run migrations + seeds
 php artisan key:generate
-php artisan migrate:fresh --seed
 
 # import database from ../resources/data.sql
 
