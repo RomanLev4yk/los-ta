@@ -161,7 +161,6 @@ RUN chmod -R 755 storage/ \
      && chmod -R 755 public/ \
      && chmod -R 755 bootstrap/ \
      && chmod -R 755 storage/ \
-     && npm install pm2 -g
 
 #####################################
 # Laravel Schedule Cron Job:
