@@ -160,7 +160,7 @@ RUN dos2unix /usr/local/bin/docker-entrypoint \
 RUN chmod -R 755 storage/ \
      && chmod -R 755 public/ \
      && chmod -R 755 bootstrap/ \
-     && chmod -R 755 storage/ \
+     && chmod -R 755 storage/
 
 #####################################
 # Laravel Schedule Cron Job:
