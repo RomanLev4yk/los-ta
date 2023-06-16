@@ -19,4 +19,16 @@ class PriceRepository implements PriceRepositoryInterface
             ->personsLike($personsNumber)
             ->get();
     }
+
+    public function issetDatePrice(string $propertyId, string $date, int $dayOfWeek, int $personsNumber): bool
+    {
+        return PriceModel::property($propertyId)
+            ->where(function ($query) use ($date) {
+                $query->where('period_from', '<=', $date)
+                    ->where('period_till', '>=', $date);
+            })
+            ->dayOfWeekLike($dayOfWeek)
+            ->personsLike($personsNumber)
+            ->exists();
+    }
 }

@@ -25,7 +25,6 @@ class GetAvailabilityListRequest extends FormRequest
     {
         return [
             'fromDate'          => 'nullable|date_format:Y-m-d',
-            'toDate'            => 'nullable|date_format:Y-m-d',
             'propertyId'        => 'nullable|int',
         ];
     }

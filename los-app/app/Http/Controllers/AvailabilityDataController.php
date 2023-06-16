@@ -20,11 +20,10 @@ class AvailabilityDataController extends Controller
         // $propertyId should be passed from frontend also
         $propertyId = $request->get('propertyId', '71438849-47cb-4b00-82de-34fff691f017');
 
-        if ($request->has('fromDate') && $request->get('toDate')) {
+        if ($request->has('fromDate')) {
             $response = $availabilityService->parseAvailableStayPrices(
                 $propertyId,
-                $request->get('fromDate'),
-                $request->get('toDate')
+                $request->get('fromDate')
             );
 
             return view('los-table', [

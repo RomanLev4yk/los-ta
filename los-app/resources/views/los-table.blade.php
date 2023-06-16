@@ -3,15 +3,10 @@
 @section('content')
     <div class="form-wrapper">
         <form method="get" action="{{url('/')}}">
-            @csrf
             <div>
                 <div class="form-group">
                     <label for="exampleInputEmail1">Date from</label>
                     <input type="text" id="title" name="fromDate" class="form-control" placeholder="YYYY-MM-DD" required="">
-                </div>
-                <div class="form-group">
-                    <label for="exampleInputEmail1">Date to</label>
-                    <input type="text" id="title" name="toDate" class="form-control" placeholder="YYYY-MM-DD" required="">
                 </div>
             </div>
             <div class="actions">

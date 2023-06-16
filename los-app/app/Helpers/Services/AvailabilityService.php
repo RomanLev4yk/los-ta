@@ -2,7 +2,9 @@
 
 namespace App\Helpers\Services;
 
+use Carbon\Carbon;
 use App\Models\PriceModel;
+use App\Enum\DateFormatEnum;
 use App\Models\AvailabilityModel;
 use App\Repositories\PriceRepository;
 use App\Repositories\AvailabilityRepository;
@@ -23,13 +25,13 @@ final class AvailabilityService
         $this->availabilityRepository = $availabilityRepository;
     }
 
-    public function parseAvailableStayPrices(string $propertyId, string $fromDate, string $toDate): array
+    public function parseAvailableStayPrices(string $propertyId, string $fromDate): array
     {
         // Get available property options inside time period
         $availabilities = $this->availabilityRepository->getPropertyAvailabilitiesByPeriod(
             $propertyId,
             $fromDate,
-            $toDate
+            Carbon::parse($fromDate)->addDays($this->numberOfDays)->format(DateFormatEnum::DATE)
         );
 
         $result = [];
@@ -49,7 +51,7 @@ final class AvailabilityService
                     );
 
                     // Generating day options array
-                    for ($day = 1; $day <= $this->numberOfDays; $day++) {
+                    for ($day = 1, $addDays = 0; $day <= $this->numberOfDays; $day++, $addDays++) {
                         // Retrieving minimum prices amount per day and per duration
                         $minOneDayPrice = $prices->where('minimum_stay', '<=', $day)
                             ->min('amount');
@@ -59,16 +61,28 @@ final class AvailabilityService
                         $minMultipleDaysPrice = $prices->whereBetween('duration', [2, $day])
                             ->min('amount');
 
-                        // Calculating direct day price amount
-                        $personData[$day] = $this->calculateDayPrice(
-                            $availability,
-                            $prices,
-                            $day,
-                            $persons,
-                            $minOneDayPrice,
-                            $minOneDayModel,
-                            $minMultipleDaysPrice
+                        // Checking if price exists for further date
+                        $priceExist = $this->priceRepository->issetDatePrice(
+                            $propertyId,
+                            $availability->date->addDays($addDays)->format(DateFormatEnum::DATE),
+                            $availability->date->addDays($addDays)->dayOfWeek,
+                            $persons
                         );
+
+                        // Calculating direct day price amount if price exists
+                        if ($priceExist) {
+                            $personData[$day] = $this->calculateDayPrice(
+                                $availability,
+                                $prices,
+                                $day,
+                                $persons,
+                                $minOneDayPrice,
+                                $minOneDayModel,
+                                $minMultipleDaysPrice
+                            );
+                        } else {
+                            $personData[$day] = 0;
+                        }
                     }
                     // Preparing response array
                     $result[$availability->date->format('Y-m-d')][$persons] = $personData;
