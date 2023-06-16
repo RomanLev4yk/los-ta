@@ -157,10 +157,10 @@ COPY .docker/docker-entrypoint /usr/local/bin/
 RUN dos2unix /usr/local/bin/docker-entrypoint \
     && chmod +x /usr/local/bin/docker-entrypoint
 
-RUN chmod -R 755 storage/ \
+RUN chown -R www-data:www-data storage/ \
+     && chmod -R 755 storage/ \
      && chmod -R 755 public/ \
-     && chmod -R 755 bootstrap/ \
-     && chmod -R 755 storage/
+     && chmod -R 755 bootstrap/
 
 #####################################
 # Laravel Schedule Cron Job:
