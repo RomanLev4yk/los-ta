@@ -16,6 +16,8 @@ npm install
 # create .env
 # enter bash and install packages
 docker compose exec app_los bash
+# enter using www-data user
+docker compose exec --user www-data app_los bash
 composer install
 
 # generate app key
