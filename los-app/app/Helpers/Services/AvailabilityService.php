@@ -111,7 +111,6 @@ final class AvailabilityService
     ): int {
         // Checking if price property and price are available to book
         if ($priceModel && $day <= $availability->maximum_stay && $day >= $availability->minimum_stay) {
-
             if ($minMultipleDaysPrice) {
                 // Calculating if there is a minimum multiple days duration price
                 $multipleDayModel = $prices->where('amount', $minMultipleDaysPrice)->first();
