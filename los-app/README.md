@@ -13,7 +13,7 @@ docker compose up -d
 
 npm install
 
-# create .env
+# copy .env from env.example
 # enter bash and install packages
 docker compose exec app_los bash
 composer install
