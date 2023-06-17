@@ -42,6 +42,7 @@ final class AvailabilityService
             if ($availability->arrival_allowed) {
                 // Generating date option prices array according to number of people
                 for ($persons = 1; $persons <= $this->numberOfPersons; $persons++) {
+                    // Preparing persons / days response data
                     $personData = [];
 
                     // Retrieving property prices data in date range
@@ -71,8 +72,8 @@ final class AvailabilityService
                             $persons
                         );
 
-                        // Calculating direct day price amount if price exists
                         if ($priceExist) {
+                            // Calculating direct day price amount if price exists
                             $personData[$day] = $this->calculateDayPrice(
                                 $availability,
                                 $prices,
@@ -83,6 +84,7 @@ final class AvailabilityService
                                 $minMultipleDaysPrice
                             );
                         } else {
+                            // Setting not available null price value if price for this date doesnt exist
                             $personData[$day] = 0;
                         }
                     }
