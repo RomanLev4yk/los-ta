@@ -21,6 +21,7 @@ class AvailabilityDataController extends Controller
         $propertyId = $request->get('propertyId', '71438849-47cb-4b00-82de-34fff691f017');
 
         if ($request->has('fromDate')) {
+            // Getting LOS table with prepared data if fromDate provided
             $response = $availabilityService->parseAvailableStayPrices(
                 $propertyId,
                 $request->get('fromDate')
@@ -30,6 +31,7 @@ class AvailabilityDataController extends Controller
                 'pricesData' => $response,
             ]);
         } else {
+            // Getting base blade with fromDate form
             return view('los-table');
         }
     }

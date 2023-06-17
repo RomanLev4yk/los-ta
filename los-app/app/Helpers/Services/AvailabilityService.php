@@ -37,6 +37,8 @@ final class AvailabilityService
         $result = [];
         // Parsing available property options for prices
         $availabilities->each(function (AvailabilityModel $availability) use ($propertyId, &$result) {
+            $date = $availability->date->format('Y-m-d');
+
             if ($availability->arrival_allowed) {
                 // Generating date option prices array according to number of people
                 for ($persons = 1; $persons <= $this->numberOfPersons; $persons++) {
@@ -85,19 +87,11 @@ final class AvailabilityService
                         }
                     }
                     // Preparing response array
-                    $result[$availability->date->format('Y-m-d')][$persons] = $personData;
+                    $result[$date][$persons] = $personData;
                 }
             } else {
                 // Preparing empty response array
-                for ($persons = 1; $persons <= $this->numberOfPersons; $persons++) {
-                    $personData = [];
-
-                    for ($day = 1; $day <= $this->numberOfDays; $day++) {
-                        $personData[$day] = 0;
-                    }
-
-                    $result[$availability->date->format('Y-m-d')][$persons] = $personData;
-                }
+                $result[$date] = $this->makeNotAvailableArray();
             }
         });
 
@@ -115,27 +109,48 @@ final class AvailabilityService
     ): int {
         // Checking if price property and price are available to book
         if ($priceModel && $day <= $availability->maximum_stay && $day >= $availability->minimum_stay) {
-            // Checking if there is a minimum days duration price
+
             if ($minMultipleDaysPrice) {
-                // Calculating according to settings
+                // Calculating if there is a minimum multiple days duration price
                 $multipleDayModel = $prices->where('amount', $minMultipleDaysPrice)->first();
                 $extraDays = $day - $multipleDayModel->duration;
 
                 if (str_starts_with($priceModel->persons, $persons)) {
+                    // Calculate price per base number of persons
                     return ($minMultipleDaysPrice + $extraDays * $minOneDayPrice) / 100;
                 } else {
+                    // Calculate price per extra number of persons
                     return ($minMultipleDaysPrice + $extraDays * $minOneDayPrice
                             + $priceModel->extra_person_price * $day) / 100;
                 }
             } else {
+                // Calculating if there is a base one day duration price
                 if (str_starts_with($priceModel->persons, $persons)) {
+                    // Calculate price per base number of persons
                     return $minOneDayPrice * $day / 100;
                 } else {
+                    // Calculate price per extra number of persons
                     return ($minOneDayPrice * $day + $priceModel->extra_person_price * $day) / 100;
                 }
             }
         } else {
             return 0;
         }
+    }
+
+    private function makeNotAvailableArray(): array
+    {
+        // Preparing array of not available property per persons and days
+        $notAvailableArray = [];
+        for ($persons = 1; $persons <= $this->numberOfPersons; $persons++) {
+            $personData = [];
+
+            for ($day = 1; $day <= $this->numberOfDays; $day++) {
+                $personData[$day] = 0;
+            }
+            $notAvailableArray[$persons] = $personData;
+        }
+
+        return $notAvailableArray;
     }
 }
