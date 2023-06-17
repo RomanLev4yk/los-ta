@@ -118,20 +118,18 @@ final class AvailabilityService
                 if (str_starts_with($priceModel->persons, $persons)) {
                     // Calculate price per base number of persons
                     return ($minMultipleDaysPrice + $extraDays * $minOneDayPrice) / 100;
-                } else {
-                    // Calculate price per extra number of persons
-                    return ($minMultipleDaysPrice + $extraDays * $minOneDayPrice
-                            + $priceModel->extra_person_price * $day) / 100;
                 }
+                // Calculate price per extra number of persons
+                return ($minMultipleDaysPrice + $extraDays * $minOneDayPrice
+                        + $priceModel->extra_person_price * $day) / 100;
             } else {
                 // Calculating if there is a base one day duration price
                 if (str_starts_with($priceModel->persons, $persons)) {
                     // Calculate price per base number of persons
                     return $minOneDayPrice * $day / 100;
-                } else {
-                    // Calculate price per extra number of persons
-                    return ($minOneDayPrice * $day + $priceModel->extra_person_price * $day) / 100;
                 }
+                // Calculate price per extra number of persons
+                return ($minOneDayPrice * $day + $priceModel->extra_person_price * $day) / 100;
             }
         } else {
             return 0;
