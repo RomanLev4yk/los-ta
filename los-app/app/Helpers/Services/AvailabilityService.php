@@ -40,7 +40,7 @@ final class AvailabilityService
         $rangePrices = $this->priceRepository->getRangePricesData(
             $propertyId,
             $fromDate,
-            $toDate
+            Carbon::parse($toDate)->addDays($this->numberOfDays)->format(DateFormatEnum::DATE)
         );
 
         $result = [];
