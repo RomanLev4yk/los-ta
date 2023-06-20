@@ -55,9 +55,13 @@ final class AvailabilityService
                     $personData = [];
 
                     // Retrieving property prices data in date range
-                    $prices = $rangePrices->filter(function (PriceModel $priceItem) use ($availability, $persons) {
-                        return $priceItem->period_from <= $availability->date->format(DateFormatEnum::DATE)
-                            && $priceItem->period_till >= $availability->date->format(DateFormatEnum::DATE)
+                    $prices = $rangePrices->filter(function (PriceModel $priceItem) use (
+                        $availability,
+                        $persons,
+                        $date
+                    ) {
+                        return $priceItem->period_from <= $date
+                            && $priceItem->period_till >= $date
                             && str_contains($priceItem->weekdays, $availability->date->dayOfWeek)
                             && str_contains($priceItem->persons, $persons);
                     });
@@ -83,7 +87,7 @@ final class AvailabilityService
                                     ->format(DateFormatEnum::DATE)
                                 && $priceItem->period_till >= $availability->date->addDays($addDays)
                                     ->format(DateFormatEnum::DATE)
-                                && str_contains($priceItem->weekdays, $availability->date->dayOfWeek)
+                                && str_contains($priceItem->weekdays, $availability->date->addDays($addDays)->dayOfWeek)
                                 && str_contains($priceItem->persons, $persons);
                         });
 
