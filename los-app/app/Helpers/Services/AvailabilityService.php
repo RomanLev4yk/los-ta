@@ -27,16 +27,25 @@ final class AvailabilityService
 
     public function parseAvailableStayPrices(string $propertyId, string $fromDate): array
     {
+        $toDate = Carbon::parse($fromDate)->addDays($this->numberOfDays)->format(DateFormatEnum::DATE);
+
         // Get available property options inside time period
         $availabilities = $this->availabilityRepository->getPropertyAvailabilitiesByPeriod(
             $propertyId,
             $fromDate,
-            Carbon::parse($fromDate)->addDays($this->numberOfDays)->format(DateFormatEnum::DATE)
+            $toDate
+        );
+
+        // Retrieving property prices data in date range
+        $rangePrices = $this->priceRepository->getRangePricesData(
+            $propertyId,
+            $fromDate,
+            $toDate
         );
 
         $result = [];
         // Parsing available property options for prices
-        $availabilities->each(function (AvailabilityModel $availability) use ($propertyId, &$result) {
+        $availabilities->each(function (AvailabilityModel $availability) use ($propertyId, &$result, $rangePrices) {
             $date = $availability->date->format('Y-m-d');
 
             if ($availability->arrival_allowed) {
@@ -46,12 +55,12 @@ final class AvailabilityService
                     $personData = [];
 
                     // Retrieving property prices data in date range
-                    $prices = $this->priceRepository->getPricesData(
-                        $propertyId,
-                        $availability->date,
-                        $availability->date->dayOfWeek,
-                        $persons
-                    );
+                    $prices = $rangePrices->filter(function (PriceModel $priceItem) use ($availability, $persons) {
+                        return $priceItem->period_from <= $availability->date->format(DateFormatEnum::DATE)
+                            && $priceItem->period_till >= $availability->date->format(DateFormatEnum::DATE)
+                            && str_contains($priceItem->weekdays, $availability->date->dayOfWeek)
+                            && str_contains($priceItem->persons, $persons);
+                    });
 
                     // Generating day options array
                     for ($day = 1, $addDays = 0; $day <= $this->numberOfDays; $day++, $addDays++) {
@@ -65,14 +74,20 @@ final class AvailabilityService
                             ->min('amount');
 
                         // Checking if price exists for further date
-                        $priceExist = $this->priceRepository->issetDatePrice(
-                            $propertyId,
-                            $availability->date->addDays($addDays)->format(DateFormatEnum::DATE),
-                            $availability->date->addDays($addDays)->dayOfWeek,
-                            $persons
-                        );
+                        $priceExist = $rangePrices->filter(function (PriceModel $priceItem) use (
+                            $availability,
+                            $persons,
+                            $addDays
+                        ) {
+                            return $priceItem->period_from <= $availability->date->addDays($addDays)
+                                    ->format(DateFormatEnum::DATE)
+                                && $priceItem->period_till >= $availability->date->addDays($addDays)
+                                    ->format(DateFormatEnum::DATE)
+                                && str_contains($priceItem->weekdays, $availability->date->dayOfWeek)
+                                && str_contains($priceItem->persons, $persons);
+                        });
 
-                        if ($priceExist) {
+                        if ($priceExist->isNotEmpty()) {
                             // Calculating direct day price amount if price exists
                             $personData[$day] = $this->calculateDayPrice(
                                 $availability,

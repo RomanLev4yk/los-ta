@@ -31,4 +31,14 @@ class PriceRepository implements PriceRepositoryInterface
             ->personsLike($personsNumber)
             ->exists();
     }
+
+    public function getRangePricesData(string $propertyId, string $dateFrom, string $dateTo): Collection
+    {
+        return PriceModel::property($propertyId)
+            ->where(function ($query) use ($dateFrom, $dateTo) {
+                $query->where('period_from', '<=', $dateTo)
+                    ->where('period_till', '>=', $dateFrom);
+            })
+            ->get();
+    }
 }
